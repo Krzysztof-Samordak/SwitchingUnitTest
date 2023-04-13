@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "x8AgB+tM3FqN6OYaJAnftc8GWq8BGYadQhx/Q1yHEzOO7tHwS2/D4KxauMNrtYQepD9twsszMLCYL+thlNt4AA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Krzysztof Samordak\\OneDrive - 3Shape A S\\Documents\\Programs and scripts\\C#\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Krzysztof Samordak\\.nuget\\packages\\system.codedom\\7.0.0\\system.codedom.7.0.0.nupkg.sha512",
+    "C:\\Users\\Krzysztof Samordak\\.nuget\\packages\\system.management\\7.0.0\\system.management.7.0.0.nupkg.sha512",
+    "C:\\Users\\Krzysztof Samordak\\.nuget\\packages\\threeshape.msbuild.codecheck\\7.0.0\\threeshape.msbuild.codecheck.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

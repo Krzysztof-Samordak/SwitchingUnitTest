@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>ThreeShapeSwitchingUnitTest</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+	  <AssemblyName>3ShapeSwitchingUnitTest</AssemblyName>
+	  <SignAssembly>False</SignAssembly>
+	  <Authors>KrzysztofSamordak</Authors>
+	  <Company>3Shape Poland Sp. z o.o.</Company>
+	  <Description>The 3ShapeSwitchingUnitTest is a Windows desktop application for performing preliminary tests of basic functionality of 10031908B SWITCHING UNIT.</Description>
+	  <Copyright>Copyright 2023 3Shape A/S</Copyright>
+	  <RepositoryUrl>https://github.com/Krzysztof-Samordak/3ShapeSwitchingUnitTest.git</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+	  <ApplicationIcon>3ShapeSwitchingUnitTest.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="7.0.0" />
+    <PackageReference Include="ThreeShape.MSBuild.CodeCheck" Version="7.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
