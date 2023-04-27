@@ -24,3 +24,12 @@ C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts
 C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\obj\Debug\net6.0-windows\3ShapeSwitchingUnitTest.genruntimeconfig.cache
 C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\obj\Debug\net6.0-windows\ref\3ShapeSwitchingUnitTest.dll
 C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\bin\Debug\net6.0-windows\3ShapeSwitchingUnitTest.dll.config
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\obj\Debug\net6.0-windows\MainWindow.g.cs
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\obj\Debug\net6.0-windows\View\NotificationMessageBoxView.g.cs
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\bin\Debug\net6.0-windows\Microsoft.Practices.ServiceLocation.dll
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\bin\Debug\net6.0-windows\Microsoft.Xaml.Behaviors.dll
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\bin\Debug\net6.0-windows\Prism.Desktop.Net40.dll
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\bin\Debug\net6.0-windows\Unity.Abstractions.dll
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\bin\Debug\net6.0-windows\Unity.Container.dll
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\obj\Debug\net6.0-windows\MainWindow.baml
+C:\Users\Krzysztof Samordak\OneDrive - 3Shape A S\Documents\Programs and scripts\C#\3ShapeSwitchingUnitTest\3ShapeSwitchingUnitTest\obj\Debug\net6.0-windows\View\NotificationMessageBoxView.baml

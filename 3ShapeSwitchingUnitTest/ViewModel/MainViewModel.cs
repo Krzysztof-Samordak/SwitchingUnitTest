@@ -3,6 +3,7 @@
 using ThreeShapeSwitchingUnitTest.Commands;
 using ThreeShapeSwitchingUnitTest.Loggers;
 using ThreeShapeSwitchingUnitTest.Tests;
+using ThreeShapeSwitchingUnitTest.Controls.MessageBox.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -28,6 +29,12 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
         //Total numbers of tests achived from python script
         int _totalNumberOfTests = 0;
+
+        //Test Setup variables
+        string _currentDirectory = Directory.GetCurrentDirectory();
+        string _image1Path = empty;
+        string _image2Path = empty;
+        string _image3Path = empty;
 
         //Auxiliary variables
         const string en = "True";
@@ -115,22 +122,22 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             get { return _testStage; }
             set
             {
-                if(value == ready)
+                if (value == ready)
                 {
                     testStageColor = "Azure";
                     _testStage = value;
                     OnPropertyChanged();
-                }else if (value == testInProgress)
+                } else if (value == testInProgress)
                 {
                     testStageColor = "Orange";
                     _testStage = value;
                     OnPropertyChanged();
-                }else if (value == testFinished)
+                } else if (value == testFinished)
                 {
                     testStageColor = "Azure";
                     _testStage = value;
                     OnPropertyChanged();
-                }else if (value == testStop)
+                } else if (value == testStop)
                 {
                     testStageColor = "Azure";
                     _testStage = value;
@@ -149,7 +156,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     testResultColor = "Green";
                     _testResult = value;
                     OnPropertyChanged();
-                }else if(value == fail)
+                } else if (value == fail)
                 {
                     testResultColor = "Red";
                     _testResult = value;
@@ -215,9 +222,9 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         public MainViewModel()
         {
             _testProcess = new Process();
-
-            //Read Configuration file and attach values to adequate variables
-            ReadConfig();
+             
+           //Read Configuration file and attach values to adequate variables
+           ReadConfig();
 
             //Setup Test Process
             _testStartInfo.FileName = _pythonConsolePath;
@@ -230,7 +237,6 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             tests = new ObservableCollection<Test>();
 
             CheckTesterConnection();
-
         }
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -239,6 +245,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
         public void StartProcess(object obj)
         {
+            var result = fail;
             startButton = dis;
             try
             {
@@ -254,18 +261,24 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             }
             startButton = en;
             stopTest();
-            if(testStage == testInProgress)
+            if (testStage == testInProgress && _testProcess.StartInfo.Arguments == _pythonTestScriptName)
             {
                 testStage = testFinished;
+                if (tests.Count == _totalNumberOfTests && tests.All(test => test.result == en))
+                {
+                    result = pass;
+                }
+                testResult = result;
             }
+            
         }
 
         public void CheckTesterConnection()
         {
             //Setup test
-            _testProcess.StartInfo.Arguments = _pythonTestScriptName;
-
             _testProcess.StartInfo.Arguments = _pythonTestConnectionScriptName;
+
+            //Call Start Test process
             ThreadPool.QueueUserWorkItem(new WaitCallback(StartProcess));
         }
 
@@ -273,30 +286,20 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         {
             try
             {
-                if ((
-                    ConfigurationManager.AppSettings.Get("PenDriveVid") is not null &&
-                    ConfigurationManager.AppSettings.Get("PenDriveName") is not null &&
-                    ConfigurationManager.AppSettings.Get("UsbAudioControllerVid") is not null &&
-                    ConfigurationManager.AppSettings.Get("UsbHubControllerName") is not null &&
-                    ConfigurationManager.AppSettings.Get("UsbAudioControllerVid") is not null &&
-                    ConfigurationManager.AppSettings.Get("UsbAudioControllerName") is not null &&
-                    ConfigurationManager.AppSettings.Get("UsbCompositeDeviceVid") is not null &&
-                    ConfigurationManager.AppSettings.Get("UsbCompositeDeviceName") is not null &&
-                    ConfigurationManager.AppSettings.Get("NetworkAdapterVid") is not null &&
-                    ConfigurationManager.AppSettings.Get("NetworkAdapterName") is not null &&
-                    ConfigurationManager.AppSettings.Get("FlashDiskVid") is not null &&
-                    ConfigurationManager.AppSettings.Get("FlashDiskName") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElVisaAdress") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElControlAppName") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElMinTestLimit") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElStartCurrent") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElMaxCurrent") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElCurrentIncreasement") is not null &&
-                    ConfigurationManager.AppSettings.Get("ElcheckVoltageAfterTest") is not null))
-                {
+                if (
+                    ConfigurationManager.AppSettings.Get("PythonConsolePath") is not null &&
+                    ConfigurationManager.AppSettings.Get("PythonTestScriptName") is not null &&
+                    ConfigurationManager.AppSettings.Get("PythonTestConnectionScriptName") is not null &&
+                    ConfigurationManager.AppSettings.Get("Image1Name") is not null &&
+                    ConfigurationManager.AppSettings.Get("Image2Name") is not null &&
+                    ConfigurationManager.AppSettings.Get("Image3Name") is not null)
+                    {
                     _pythonConsolePath = ConfigurationManager.AppSettings.Get("PythonConsolePath");
                     _pythonTestScriptName = ConfigurationManager.AppSettings.Get("PythonTestScriptName");
                     _pythonTestConnectionScriptName = ConfigurationManager.AppSettings.Get("PythonTestConnectionScriptName");
+                    _image1Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image1Name");
+                    _image2Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image2Name");
+                    _image3Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image3Name");
                 }
                 else
                 {
@@ -371,83 +374,41 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         public void PrepareTestSetup()
         {
             string[] input;
-            this._pythonTestScriptPath = Directory.GetCurrentDirectory();
+            string tmp = empty;
+            this._pythonTestScriptPath = _currentDirectory;
+
+            // Add DataReceive from tester EventHandler
             _testProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
             {
                 if (e.Data != null)
                 {
+
+                    // Handle connecting to tester
                     Debug.WriteLine(e.Data.ToString());
                     if (e.Data.ToString().Contains("Connected"))
                     {
-                        if(_testProcess.StartInfo.Arguments == _pythonTestConnectionScriptName )
+                        if (_testProcess.StartInfo.Arguments == _pythonTestConnectionScriptName)
                         {
                             testerStatusColor = "Green";
                             testerStatus = "Connected";
                             testStage = empty;
                             startButton = en;
-                        }else
+                        }
+                        else
                         {
                             testerStatusColor = "Green";
                             testerStatus = "Connected";
                             _testProcess.StandardInput.WriteLine();
-
                         }
-
                     }
-                    else if(e.Data.ToString().Contains("Number of tests -"))
+
+                    // Check how many tests should be performed
+                    else if (e.Data.ToString().Contains("Number of tests -"))
                     {
                         _totalNumberOfTests = Convert.ToInt16(e.Data.ToString().Split("-").Last());
                     }
-                    else if (e.Data.ToString().Contains("disconnected"))
-                        {
-                            MessageBox.Show("Tester disconnected!");
-                            testerStatusColor = "Red";
-                            testerStatus = "Disconnected";
-                            testStage = testStop;
-                    }
-                        else if (e.Data.ToString().Contains("Test"))
-                        {
-                            input = e.Data.ToString().Split("-").Skip(1).ToArray();
-                            Test tmp = new Test(input);
-                        Debug.WriteLine(tmp);
-                            App.Current.Dispatcher.Invoke(new Action(() => tests.Add(tmp)));
-                            Thread.Sleep(1000);
-                            _testProcess.StandardInput.WriteLine("y");
-                        }
-                        else if (e.Data.ToString().Equals("Check if Rotation1 is moving right"))
-                        {
-                            Debug.WriteLine("CheckingRotation1");
-                            Thread.Sleep(1000);
-                            _testProcess.StandardInput.WriteLine("y");
-                        }
-                        else if (e.Data.ToString().Equals("Check if Rotation2 is moving right"))
-                        {
-                            Debug.WriteLine("Checking Rotation2");
-                            Thread.Sleep(1000);
-                            _testProcess.StandardInput.WriteLine("y");
-                        }
-                        else if (e.Data.ToString().Equals("Check if SwitchingUnit is moving right"))
-                        {
-                            Debug.WriteLine("Checking SwitchingUnit");
-                            Thread.Sleep(15000);
-                            _testProcess.StandardInput.WriteLine("y");
-                        }
-                    }
-                });
 
-            _testProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-            {
-            if (e.Data != null)
-            {
-                Debug.WriteLine(e.Data);
-
-                if (e.Data.ToString().Contains("TimeoutError"))
-                {
-                    MessageBox.Show("Cannot connect to tester!");
-                    testerStatusColor = "Red";
-                    testerStatus = "Disconnected";
-                        testStage = testStop;
-                    }
+                    // Handle disconneting of the tester
                     else if (e.Data.ToString().Contains("disconnected"))
                     {
                         MessageBox.Show("Tester disconnected!");
@@ -455,12 +416,106 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                         testerStatus = "Disconnected";
                         testStage = testStop;
                     }
+
+                    // Handle displaying test result
+                    else if (e.Data.ToString().Contains("Test"))
+                    {
+                        input = e.Data.ToString().Split("-").Skip(1).ToArray();
+                        Test tmp = new Test(input);
+                        Debug.WriteLine(tmp);
+                        App.Current.Dispatcher.Invoke(new Action(() => tests.Add(tmp)));
+                        Thread.Sleep(1000);
+                    }
+
+                    // Handle showing notification window during Rotation1 Motor Test
+                    else if (e.Data.ToString().Equals("Check if Rotation1 is moving right"))
+                    {
+                        bool? result = false;
+
+                        App.Current.Dispatcher.Invoke(new Action(() => result = ShowNotification("Check if Rotation1 is moving Right",
+                            _image1Path)));
+                        if (result == true)
+                        {
+                            // User accepted the dialog box
+                            _testProcess.StandardInput.WriteLine("True");
+                        }
+                        else
+                        {
+                            // User cancelled the dialog box
+                            _testProcess.StandardInput.WriteLine("False");
+                        }
+                    }
+
+                    // Handle showing notification window during Rotation2 Motor Test
+                    else if (e.Data.ToString().Equals("Check if Rotation2 is moving right"))
+                    {
+                        bool? result = false;
+                        App.Current.Dispatcher.Invoke(new Action(() => result = ShowNotification("Check if Rotation2 is moving Right",
+                            _image2Path)));
+                        if (result == true)
+                        {
+                            // User accepted the dialog box
+                            _testProcess.StandardInput.WriteLine("True");
+                        }
+                        else
+                        {
+                            // User cancelled the dialog box
+                            _testProcess.StandardInput.WriteLine("False");
+                        }
+                    }
+
+                    // Handle showing notification window during SwitchingUnit Motor Test
+                    //else if (e.Data.ToString().Equals("Check if SwitchingUnit is moving right"))
+                    //{
+                    //}
+                }
+            });
+
+            // Add ErrorDataReceive from tester EventHandler
+            _testProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    Debug.WriteLine(e.Data);
+
+                    // Handle TimeoutError
+                    if (e.Data.ToString().Contains("TimeoutError"))
+                    {
+                        MessageBox.Show("Cannot connect to tester!");
+                        testerStatusColor = "Red";
+                        testerStatus = "Disconnected";
+                        testStage = testStop;
+                    }
+
+                    //Handle DisconnectedError
+                    else if (e.Data.ToString().Contains("disconnected"))
+                    {
+                        MessageBox.Show("Tester disconnected!");
+                        testerStatusColor = "Red";
+                        testerStatus = "Disconnected";
+                        testStage = testStop;
+                    }
+
+                    // Handle missing file error
                     else if (e.Data.ToString().Contains("python.exe: can't open file") || e.Data.ToString().Contains("No such file or directory"))
                     {
                         MessageBox.Show("Cannot open python script!");
                     }
                 }
             });
+
+            //Check if images required by notifications are in programm folder
+            if (!CheckIfImagesExists())
+            {
+                System.Windows.Application.Current.Shutdown();
+            }
+        }
+
+        public bool? ShowNotification(string description, string imagePath)
+        {
+            NotificationWindow dialog = new NotificationWindow(description, imagePath);
+            var result = dialog.ShowDialog();
+            return result;
         }
         public void stopTest()
         {
@@ -474,8 +529,29 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             {
                 MessageBox.Show(ex.Message);
             }
-            //testStage = testStop;
             testResult = empty;
+        }
+
+
+        public bool CheckIfImagesExists()
+        {
+            bool returnValue = true;
+            if (!File.Exists(_image1Path))
+            {
+                MessageBox.Show("Cannot find image file: " + _image1Path);
+                returnValue = false;
+            }
+            if (!File.Exists(_image2Path))
+            {
+                MessageBox.Show("Cannot find image file: " + _image2Path);
+                returnValue = false;
+            }
+            if (!File.Exists(_image3Path))
+            {
+                MessageBox.Show("Cannot find image file: " + _image3Path);
+                returnValue = false;
+            }
+            return returnValue;
         }
     }
 }

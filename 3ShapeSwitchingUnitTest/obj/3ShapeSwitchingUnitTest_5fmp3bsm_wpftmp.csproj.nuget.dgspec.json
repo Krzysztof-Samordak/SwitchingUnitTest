@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Krzysztof Samordak\\OneDrive - 3Shape A S\\Documents\\Programs and scripts\\C#\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Krzysztof Samordak\\OneDrive - 3Shape A S\\Documents\\Programs and scripts\\C#\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Krzysztof Samordak\\OneDrive - 3Shape A S\\Documents\\Programs and scripts\\C#\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest.csproj",
+        "projectName": "3ShapeSwitchingUnitTest",
+        "projectPath": "C:\\Users\\Krzysztof Samordak\\OneDrive - 3Shape A S\\Documents\\Programs and scripts\\C#\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest.csproj",
+        "packagesPath": "C:\\Users\\Krzysztof Samordak\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Krzysztof Samordak\\OneDrive - 3Shape A S\\Documents\\Programs and scripts\\C#\\3ShapeSwitchingUnitTest\\3ShapeSwitchingUnitTest\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Krzysztof Samordak\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0-windows7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://artifactorydk.3shape.local/api/nuget/threeshape-nuget": {}
+        },
+        "frameworks": {
+          "net6.0-windows7.0": {
+            "targetAlias": "net6.0-windows",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0-windows7.0": {
+          "targetAlias": "net6.0-windows",
+          "dependencies": {
+            "Prism.Desktop.Net40": {
+              "target": "Package",
+              "version": "[4.1.1, )"
+            },
+            "System.Management": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "ThreeShape.MSBuild.CodeCheck": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Unity": {
+              "target": "Package",
+              "version": "[5.11.10, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

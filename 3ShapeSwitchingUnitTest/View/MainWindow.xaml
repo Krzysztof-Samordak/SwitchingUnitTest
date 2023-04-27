@@ -46,7 +46,7 @@
                     BorderThickness="0" Grid.Row="0" Grid.Column="4" Margin="0,6,0,0" HorizontalAlignment="Right"
                     VerticalAlignment="Top" Width="16"/>
             <Button x:Name="StartTest_Button" Content="Start test" HorizontalAlignment="Center" Background="#353340"
-                    BorderThickness="0" VerticalAlignment="Center" Height="44" Width="140"
+                    BorderThickness="0" VerticalAlignment="Center" Height="44" Width="140" IsDefault="True"
                     Command="{Binding startTestCommand}" Grid.Column="3" Grid.Row="3"
                     Foreground="Azure" FontSize="20" IsEnabled="{Binding startButton}"/>
             <Label x:Name="ResultS_Label" Content="{Binding testResult}" FontSize="20" HorizontalAlignment="Center"

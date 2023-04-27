@@ -6,6 +6,33 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
+      "CommonServiceLocator/1.0.0": {
+        "runtime": {
+          "lib/NET35/Microsoft.Practices.ServiceLocation.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.39": {
+        "runtime": {
+          "lib/net5.0-windows7.0/Microsoft.Xaml.Behaviors.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.39.4716"
+          }
+        }
+      },
+      "Prism.Desktop.Net40/4.1.1": {
+        "dependencies": {
+          "CommonServiceLocator": "1.0.0"
+        },
+        "runtime": {
+          "lib/net40/Prism.Desktop.Net40.dll": {
+            "assemblyVersion": "4.1.1.0",
+            "fileVersion": "4.1.1.0"
+          }
+        }
+      },
       "System.CodeDom/7.0.0": {
         "runtime": {
           "lib/net6.0/System.CodeDom.dll": {
@@ -33,10 +60,62 @@
           }
         }
       },
-      "ThreeShape.MSBuild.CodeCheck/7.0.0": {}
+      "System.Runtime.CompilerServices.Unsafe/4.5.2": {
+        "runtime": {
+          "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "assemblyVersion": "4.0.4.1",
+            "fileVersion": "4.6.26919.2"
+          }
+        }
+      },
+      "ThreeShape.MSBuild.CodeCheck/7.0.0": {},
+      "Unity/5.11.10": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.5.2"
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/Unity.Abstractions.dll": {
+            "assemblyVersion": "5.11.7.0",
+            "fileVersion": "5.11.7.0"
+          },
+          "lib/netcoreapp3.0/Unity.Container.dll": {
+            "assemblyVersion": "5.11.11.0",
+            "fileVersion": "5.11.11.0"
+          }
+        }
+      },
+      "XamlBehaviors.Mirror/1.1.29": {
+        "runtime": {
+          "lib/net5.0-windows7.0/Microsoft.Xaml.Behaviors.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.29.11078"
+          }
+        }
+      }
     }
   },
   "libraries": {
+    "CommonServiceLocator/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RJjv0yxm+Fk/ak/CVMTGr0ng7g/nudkVYos4eQrIDpth3BdE1j7J2ddRm8FXtOoIZbgDqTU6hKq5zoackwL3HQ==",
+      "path": "commonservicelocator/1.0.0",
+      "hashPath": "commonservicelocator.1.0.0.nupkg.sha512"
+    },
+    "Microsoft.Xaml.Behaviors.Wpf/1.1.39": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8PZKqw9QOcu42xk8puY4P1+EXHL9YGOR9b7qhaYx5cILHul456H073tj99vyPcCt0W0781T9RwHqkx507ZyUpQ==",
+      "path": "microsoft.xaml.behaviors.wpf/1.1.39",
+      "hashPath": "microsoft.xaml.behaviors.wpf.1.1.39.nupkg.sha512"
+    },
+    "Prism.Desktop.Net40/4.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9hWOp62PosskFCkOS9+ylUWHpFbwit1oZC7Fwr4JiMQmPkVmh15kB7B4tw6MHIsvbNVTPOFfFsxCsQ0PgchEmA==",
+      "path": "prism.desktop.net40/4.1.1",
+      "hashPath": "prism.desktop.net40.4.1.1.nupkg.sha512"
+    },
     "System.CodeDom/7.0.0": {
       "type": "package",
       "serviceable": true,
@@ -51,12 +130,33 @@
       "path": "system.management/7.0.0",
       "hashPath": "system.management.7.0.0.nupkg.sha512"
     },
+    "System.Runtime.CompilerServices.Unsafe/4.5.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wprSFgext8cwqymChhrBLu62LMg/1u92bU+VOwyfBimSPVFXtsNqEWC92Pf9ofzJFlk4IHmJA75EDJn1b2goAQ==",
+      "path": "system.runtime.compilerservices.unsafe/4.5.2",
+      "hashPath": "system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
+    },
     "ThreeShape.MSBuild.CodeCheck/7.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-d06LB9UoWn+XzQIIPO2qSjZj6jIXud2Y8mcO9jwVfVR7GNyak7Qfkk8lfUpqzR8u62jBBywN6spFS3AvM0UPQg==",
       "path": "threeshape.msbuild.codecheck/7.0.0",
       "hashPath": "threeshape.msbuild.codecheck.7.0.0.nupkg.sha512"
+    },
+    "Unity/5.11.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-B4+Ps3oqI78hJ+dAFsJhPkJT6qycsNExgLbtw7CEHSzKc2ac3YyUR8SHQ+ZyTwld/y5IbDx/aNOHnKE9Em1zWA==",
+      "path": "unity/5.11.10",
+      "hashPath": "unity.5.11.10.nupkg.sha512"
+    },
+    "XamlBehaviors.Mirror/1.1.29": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yszOr1hOH8zjaxwWOBMrrF0hq0moRQYaKrRK6tjLbd9CDiabEqoy1kzrZICgPPpQon6FbpQURfUQMPZ5/8MgOg==",
+      "path": "xamlbehaviors.mirror/1.1.29",
+      "hashPath": "xamlbehaviors.mirror.1.1.29.nupkg.sha512"
     }
   }
 }
