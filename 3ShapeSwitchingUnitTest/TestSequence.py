@@ -110,8 +110,10 @@ print('Test-07-SwitchHome-' + str(switch_home_result), flush=True)
 
 # SwitchingUnit - Motor Test
 switchingUnitMotorTestResult = False;
+
 #Firstly check if all of sensors are working properly
 if switch_home_first_position == True and switch_home_second_position == False and endstop1_switch == True and endstop2_switch == True:
+    
     #Move motor and check whatever endstop2Switch has been activeted, if not, the rotation direction is correct
     switchingUnit.move(-0.03*math.pi, {}).wait()
     endstop2_switch = endstop2Switch.triggered
