@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace ThreeShapeSwitchingUnitTest
 {
@@ -13,5 +14,14 @@ namespace ThreeShapeSwitchingUnitTest
     /// </summary>
     public partial class App : Application
     {
+        protected void Application_Startup(object sender, StartupEventArgs args)
+        {
+            Debug.WriteLine("");
+            this.MainWindow = new MainWindow()
+            {
+                DataContext = new MainViewModel.MainViewModel()
+            };
+            MainWindow.Show();
+        }
     }
 }

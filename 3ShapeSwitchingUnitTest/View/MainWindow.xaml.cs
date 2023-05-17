@@ -28,7 +28,6 @@ namespace ThreeShapeSwitchingUnitTest
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel.MainViewModel();
         }
         void WindowClosing(object sender, EventArgs e)
         {

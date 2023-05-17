@@ -34,18 +34,29 @@ namespace ThreeShapeSwitchingUnitTest.Controls.MessageBox.Views
         {
             InitializeComponent();
         }
-        public NotificationWindow(string description, string imageSource)
+        public NotificationWindow(string description, string imageSource = null, bool selection = false)
         {
             InitializeComponent();
+            if (selection)
+            {
+                yesButton.Visibility = Visibility.Visible;
+                noButton.Visibility = Visibility.Visible;
+                okButton.Visibility = Visibility.Hidden;
+            }
             DescriptionTextBox.Text = description;
-            BitmapImage image = new BitmapImage(new Uri(imageSource, UriKind.RelativeOrAbsolute));
-            InstructionImage.Source = image;
+            if (imageSource != null)
+            {
+                BitmapImage image = new BitmapImage(new Uri(imageSource, UriKind.RelativeOrAbsolute));
+                InstructionImage.Source = image;
+            }
         }
         private void yesButton_Click(object sender, RoutedEventArgs e) =>
             DialogResult = true;
 
         private void noButton_Click(object sender, RoutedEventArgs e) =>
             DialogResult = false;
+        private void okButton_Click(object sender, RoutedEventArgs e) =>
+            DialogResult = true;
         public void Setup(string tittle, string description, string imageSource)
         {
             this.Title = tittle;
@@ -53,5 +64,7 @@ namespace ThreeShapeSwitchingUnitTest.Controls.MessageBox.Views
             BitmapImage image = new BitmapImage(new Uri(imageSource, UriKind.RelativeOrAbsolute));
             InstructionImage.Source = image;
         }
+
+
     }
 }
