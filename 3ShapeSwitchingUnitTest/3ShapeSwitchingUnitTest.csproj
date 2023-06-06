@@ -18,6 +18,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Rotation1.png" />
+    <None Remove="Rotation2.png" />
+    <None Remove="SwitchingUnitLeft.png" />
+    <None Remove="SwitchingUnitRight.png" />
+    <None Remove="TestConnection.py" />
+    <None Remove="TestSequence.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Rotation1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Rotation2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SwitchingUnitLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SwitchingUnitRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestConnection.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSequence.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="Prism.Desktop.Net40" Version="4.1.1" />
     <PackageReference Include="System.Management" Version="7.0.0" />

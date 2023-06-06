@@ -35,6 +35,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         string _image1Path = empty;
         string _image2Path = empty;
         string _image3Path = empty;
+        string _image4Path = empty;
         string _testerSerialNumber = empty;
 
         //Auxiliary variables
@@ -302,7 +303,8 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     ConfigurationManager.AppSettings.Get("BS_MBSerialNumber") is not null &&
                     ConfigurationManager.AppSettings.Get("Image1Name") is not null &&
                     ConfigurationManager.AppSettings.Get("Image2Name") is not null &&
-                    ConfigurationManager.AppSettings.Get("Image3Name") is not null)
+                    ConfigurationManager.AppSettings.Get("Image3Name") is not null &&
+                    ConfigurationManager.AppSettings.Get("Image4Name") is not null)
                 {
                     _pythonConsolePath = ConfigurationManager.AppSettings.Get("PythonConsolePath");
                     _pythonTestScriptName = ConfigurationManager.AppSettings.Get("PythonTestScriptName");
@@ -311,6 +313,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     _image1Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image1Name");
                     _image2Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image2Name");
                     _image3Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image3Name");
+                    _image4Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image4Name");
                 }
                 else
                 {
@@ -371,6 +374,12 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             {
                 _logger.log("Cannot find image file: " + _image3Path);
                 MessageBox.Show("Cannot find image file: " + _image3Path);
+                returnValue = false;
+            }
+            if (!File.Exists(_image4Path))
+            {
+                _logger.log("Cannot find image file: " + _image4Path);
+                MessageBox.Show("Cannot find image file: " + _image4Path);
                 returnValue = false;
             }
             return returnValue;
@@ -488,13 +497,13 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
                         case "Rotate the SwitchingUnit right!": //Handle showing notification window during SwitchingUnit endstop1_switch test
                             App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Rotate the SwitchingUnit right!",
-                                    _image2Path, false)));
+                                    _image3Path, false)));
                             SendCommand();
                             break;
 
                         case "Rotate the SwitchingUnit left!": //Handle showing notification window during SwitchingUnit endstop2_switch test
                             App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Rotate the SwitchingUnit left!",
-                                _image2Path, false)));
+                                _image4Path, false)));
                             SendCommand();
                             break;
 
@@ -506,7 +515,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                         case "Has Switching Unit rotated right?": //Handle showing notification window during SwitchingUnitMotor Test
                             bool? result = false;
                             App.Current.Dispatcher.Invoke(new Action(() => result = ShowNotification("Has Switching Unit rotated right?",
-                                _image2Path, true)));
+                                _image3Path, true)));
                             if (result == true)
                             {
                                 // User accepted the dialog box
