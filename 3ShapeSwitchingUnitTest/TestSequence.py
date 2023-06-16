@@ -115,7 +115,10 @@ switchingUnitMotorTestResult = False;
 if switch_home_first_position == True and switch_home_second_position == False and endstop1_switch == True and endstop2_switch == True:
     
     #Move motor and check whatever endstop2Switch has been activeted, if not, the rotation direction is correct
-    switchingUnit.move(-0.03*math.pi, {}).wait()
+    try:
+        switchingUnit.move(-0.03*math.pi, {}).wait()
+    except:
+        print()
     endstop2_switch = endstop2Switch.triggered
     if endstop2_switch == False:
         print('Check if Switching Unit is Rotating Right!', flush=True)

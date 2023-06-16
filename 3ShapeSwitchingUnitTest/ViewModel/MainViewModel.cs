@@ -25,7 +25,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
     public class MainViewModel : INotifyPropertyChanged
     {
         //Logging mechanism initialization
-        Logger _logger = new Logger();
+//        Logger _logger = new Logger();
 
         //Total numbers of tests achived from python script
         int _totalNumberOfTests = 0;
@@ -253,22 +253,22 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             try
             {
                 _testProcess.Start();
-                _logger.log("Process Started");
+//                _logger.log("Process Started");
 
                 _testProcess.BeginOutputReadLine();
                 _testProcess.BeginErrorReadLine();
                 _testProcess.WaitForExit();
-                _logger.log("Process exited");
+//                _logger.log("Process exited");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Cannot start the process! Make sure that Scan-os Production Tools are installed");
-                _logger.log("Cannot start the process! Make sure that Scan-os Production Tools are installed");
+//                _logger.log("Cannot start the process! Make sure that Scan-os Production Tools are installed");
                 testResult = empty;
             }
             startButton = en;
             stopTest();
-            _logger.log("Tester connection status: " + _testerStatus);
+//            _logger.log("Tester connection status: " + _testerStatus);
 
             if (testStage == testInProgress && _testProcess.StartInfo.Arguments == _pythonTestScriptName)
             {
@@ -278,7 +278,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     result = pass;
                 }
                 testResult = result;
-                _logger.log("Test result: " + testResult);
+//                _logger.log("Test result: " + testResult);
             }
         }
 
@@ -286,7 +286,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         {
             //Setup test
             _testProcess.StartInfo.Arguments = _pythonTestConnectionScriptName;
-            _logger.log("Checking tester connection");
+//            _logger.log("Checking tester connection");
 
             //Call Start Test process
             ThreadPool.QueueUserWorkItem(new WaitCallback(StartProcess));
@@ -322,7 +322,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             }
             catch (Exception ex)
             {
-                _logger.log(ex.ToString());
+//                _logger.log(ex.ToString());
                 MessageBox.Show(ex.Message);
             }
         }
@@ -360,25 +360,25 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             bool returnValue = true;
             if (!File.Exists(_image1Path))
             {
-                _logger.log("Cannot find image file: " + _image1Path);
+ //               _logger.log("Cannot find image file: " + _image1Path);
                 MessageBox.Show("Cannot find image file: " + _image1Path);
                 returnValue = false;
             }
             if (!File.Exists(_image2Path))
             {
-                _logger.log("Cannot find image file: " + _image2Path);
+//                _logger.log("Cannot find image file: " + _image2Path);
                 MessageBox.Show("Cannot find image file: " + _image2Path);
                 returnValue = false;
             }
             if (!File.Exists(_image3Path))
             {
-                _logger.log("Cannot find image file: " + _image3Path);
+ //               _logger.log("Cannot find image file: " + _image3Path);
                 MessageBox.Show("Cannot find image file: " + _image3Path);
                 returnValue = false;
             }
             if (!File.Exists(_image4Path))
             {
-                _logger.log("Cannot find image file: " + _image4Path);
+ //               _logger.log("Cannot find image file: " + _image4Path);
                 MessageBox.Show("Cannot find image file: " + _image4Path);
                 returnValue = false;
             }
@@ -395,17 +395,17 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             }
             catch (Exception ex)
             {
-                _logger.log(ex.Message);
+//                _logger.log(ex.Message);
                 MessageBox.Show(ex.Message);
             }
             testResult = empty;
-            _logger.log("Test stopped");
+//            _logger.log("Test stopped");
         }
 
         void SendCommand(string command = empty)
         {
             _testProcess.StandardInput.WriteLine(command);
-            _logger.log("Command sent: " + command);
+//            _logger.log("Command sent: " + command);
         }
 
         public void PrepareTestSetup()
@@ -420,7 +420,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                 if (e.Data != null)
                 {
                     message = e.Data.ToString();
-                    _logger.log("message recived: " + message);
+//                    _logger.log("message recived: " + message);
 
                     switch (message)
                     {
@@ -547,7 +547,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                 if (e.Data != null)
                 {
                     message = e.Data.ToString();
-                    _logger.log("message recived: " + message);
+//                    _logger.log("message recived: " + message);
 
                     switch (message)
                     {
