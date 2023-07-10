@@ -28,7 +28,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 //        Logger _logger = new Logger();
 
         //Total numbers of tests achived from python script
-        int _totalNumberOfTests = 0;
+        int _totalNumberOfTests = 9;
 
         //Test Setup variables
         string _currentDirectory = Directory.GetCurrentDirectory();
@@ -36,6 +36,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         string _image2Path = empty;
         string _image3Path = empty;
         string _image4Path = empty;
+        string _image5Path = empty;
         string _testerSerialNumber = empty;
 
         //Auxiliary variables
@@ -54,7 +55,6 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
         //Test procedure variables
         string _pythonConsolePath = empty;
-        string _pythonTestScriptPath = empty;
         string _pythonTestScriptName = empty;
         string _pythonTestConnectionScriptName = empty;
         Process _testProcess;
@@ -248,6 +248,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
         public void StartProcess(object obj)
         {
+            int numberOfTests = 0;
             var result = fail;
             startButton = dis;
             try
@@ -272,10 +273,17 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
             if (testStage == testInProgress && _testProcess.StartInfo.Arguments == _pythonTestScriptName)
             {
+                numberOfTests = tests.Count;
                 testStage = testFinished;
-                if (tests.Count == _totalNumberOfTests && tests.All(test => test.result == en))
+                if (numberOfTests == _totalNumberOfTests && tests.All(test => test.result == en))
                 {
                     result = pass;
+                }
+                else if (numberOfTests == 0)
+                {
+                    MessageBox.Show("Something went wrong... Not all tests have been performed! There should be " + _totalNumberOfTests
+                        + " tests!");
+                    result = empty;
                 }
                 testResult = result;
 //                _logger.log("Test result: " + testResult);
@@ -304,16 +312,18 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     ConfigurationManager.AppSettings.Get("Image1Name") is not null &&
                     ConfigurationManager.AppSettings.Get("Image2Name") is not null &&
                     ConfigurationManager.AppSettings.Get("Image3Name") is not null &&
-                    ConfigurationManager.AppSettings.Get("Image4Name") is not null)
+                    ConfigurationManager.AppSettings.Get("Image4Name") is not null &&
+                    ConfigurationManager.AppSettings.Get("Image5Name") is not null)
                 {
                     _pythonConsolePath = ConfigurationManager.AppSettings.Get("PythonConsolePath");
                     _pythonTestScriptName = ConfigurationManager.AppSettings.Get("PythonTestScriptName");
                     _pythonTestConnectionScriptName = ConfigurationManager.AppSettings.Get("PythonTestConnectionScriptName");
                     _testerSerialNumber = ConfigurationManager.AppSettings.Get("BS_MBSerialNumber");
-                    _image1Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image1Name");
-                    _image2Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image2Name");
-                    _image3Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image3Name");
-                    _image4Path = _currentDirectory + @"\" + ConfigurationManager.AppSettings.Get("Image4Name");
+                    _image1Path = _currentDirectory + @"\Images\" +  ConfigurationManager.AppSettings.Get("Image1Name");
+                    _image2Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image2Name");
+                    _image3Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image3Name");
+                    _image4Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image4Name");
+                    _image5Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image5Name");
                 }
                 else
                 {
@@ -382,6 +392,12 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                 MessageBox.Show("Cannot find image file: " + _image4Path);
                 returnValue = false;
             }
+            if (!File.Exists(_image5Path))
+            {
+                //               _logger.log("Cannot find image file: " + _image5Path);
+                MessageBox.Show("Cannot find image file: " + _image5Path);
+                returnValue = false;
+            }
             return returnValue;
         }
 
@@ -411,7 +427,6 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         public void PrepareTestSetup()
         {
             string[] input;
-            this._pythonTestScriptPath = _currentDirectory;
 
             // DataReceive from tester EventHandler
             _testProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
@@ -420,6 +435,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                 if (e.Data != null)
                 {
                     message = e.Data.ToString();
+                    Debug.WriteLine(message);
 //                    _logger.log("message recived: " + message);
 
                     switch (message)
@@ -438,6 +454,12 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                                 testerStatus = "Connected";
                                 SendCommand();
                             }
+                            break;
+                        case "TimeoutError":  // Handle TimeoutError
+                            MessageBox.Show("Cannot connect to tester!");
+                            testerStatusColor = "Red";
+                            testerStatus = "Disconnected";
+                            testStage = testStop;
                             break;
 
                         case var tmp when message.Contains("Number of tests -"): // Check how many tests should be performed
@@ -461,6 +483,17 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                             test = new Test(input);
                             App.Current.Dispatcher.Invoke(new Action(() => tests.Add(test)));
                             Thread.Sleep(1000);
+                            break;
+
+                        case "Place Articulator Plate on Rotation1 and press OK": //Handle showing notification window during SwitchingUnit endstop1_switch test
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification(@"Place Articulator Plate on Rotation1 and press OK",
+                                    _image5Path, false)));
+                            SendCommand();
+                            break;
+
+                        case "Remove Articulator Plate from Rotation1 and press OK": //Handle showing notification window during SwitchingUnit endstop1_switch test
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification(@"Remove Articulator Plate from Rotation1 and press OK")));
+                            SendCommand();
                             break;
 
                         case "Check if Rotation1 is moving right": // Handle showing notification window during Rotation1 Motor Test
@@ -496,13 +529,13 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                             break;
 
                         case "Rotate the SwitchingUnit right!": //Handle showing notification window during SwitchingUnit endstop1_switch test
-                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Rotate the SwitchingUnit right!",
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification(@"Rotate the SwitchingUnit right and press 'OK'",
                                     _image3Path, false)));
                             SendCommand();
                             break;
 
                         case "Rotate the SwitchingUnit left!": //Handle showing notification window during SwitchingUnit endstop2_switch test
-                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Rotate the SwitchingUnit left!",
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification(@"Rotate the SwitchingUnit left and press 'OK'",
                                 _image4Path, false)));
                             SendCommand();
                             break;
@@ -527,26 +560,40 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                                 SendCommand("False");
                             }
                             break;
-                        case "EndStop2 activated! The Switching Unit Motor probably is rotating in wrong direction!": // Handle showing error notification window during SwitchingUnitMotor Test
+                        case "EndStop2 activated! The SwitchingUnitMotor probably is rotating in wrong direction!": // Handle showing error notification window during SwitchingUnitMotor Test
                             App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("EndStop2 activated!" +
                                    " The Switching Unit Motor probably is" + " rotating in wrong direction!")));
                             break;
 
                         case "Cannot perform SwitchingUnitMotor because of defective sensors!": //Handle showing error notification window during SwitchingUnitMotor Test
-                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Cannot perform Switching Unit Motor" +
-                                    " Test because of defective sensors!")));
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Cannot perform Switching Unit Motor " +
+                                "Test because of defective sensors!")));
+                            break;
+                        case "Cannot perform Rotation1Switch test because of defective motor": // Handle showing error notification window caused by Rotation1Motor Failure
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Cannot perform" +
+                                " Rotation1Switch test because of defective motor!")));
+                            SendCommand();
+                            break;
+                        case "Cannot perform Rotation2Switch test because of defective motor": // Handle showing error notification window caused by Rotation1Motor Failure
+                            App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Cannot perform" +
+                                " Rotation2Switch test because of defective motor!")));
+                            SendCommand();
+                            break;
+                        case var tmp when message.Contains("Err_"): // Catch commands errors
+                            MessageBox.Show(message);
                             break;
                     }
                 }
             });
 
-            // DataReceive from tester EventHandler
+            // DataReceive from tester Error EventHandler
             _testProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
             {
                 string message;
                 if (e.Data != null)
                 {
                     message = e.Data.ToString();
+                    Debug.WriteLine(message);
 //                    _logger.log("message recived: " + message);
 
                     switch (message)
@@ -584,190 +631,3 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         }
     }
 }
-
-    // Handle connecting to tester
-    //Debug.WriteLine(e.Data.ToString());
-    //if (e.Data.ToString().Contains("Connected"))
-    //{
-    //    if (_testProcess.StartInfo.Arguments == _pythonTestConnectionScriptName)
-    //    {
-    //        testerStatusColor = "Green";
-    //        testerStatus = "Connected";
-    //        testStage = empty;
-    //        startButton = en;
-    //    }
-    //    else
-    //    {
-    //        testerStatusColor = "Green";
-    //        testerStatus = "Connected";
-    //        SendCommand();
-    //    }
-    //}
-
-    //// Check how many tests should be performed
-    //else if (e.Data.ToString().Contains("Number of tests -"))
-    //{
-    //    _totalNumberOfTests = Convert.ToInt16(e.Data.ToString().Split("-").Last());
-    //}
-
-    //// Handle disconneting of the tester
-    //else if (e.Data.ToString().Contains("disconnected"))
-    //{
-    //    MessageBox.Show("Tester disconnected!");
-    //    testerStatusColor = "Red";
-    //    testerStatus = "Disconnected";
-    //    testStage = testStop;
-    //}
-
-    // Handle serial number transmission
-    //else if (e.Data.ToString().Contains("Provide tester serial number!"))
-    //{
-    //    SendCommand(_testerSerialNumber);
-    //}
-
-    //// Handle displaying test result
-    //else if (e.Data.ToString().Contains("Test"))
-    //{
-    //    input = e.Data.ToString().Split("-").Skip(1).ToArray();
-    //    Test tmp = new Test(input);
-    //    Debug.WriteLine(tmp);
-    //    App.Current.Dispatcher.Invoke(new Action(() => tests.Add(tmp)));
-    //    Thread.Sleep(1000);
-    //}
-
-    //// Handle showing notification window during Rotation1 Motor Test
-    //else if (e.Data.ToString().Equals("Check if Rotation1 is moving right"))
-    //{
-    //    bool? result = false;
-
-    //    App.Current.Dispatcher.Invoke(new Action(() => result = ShowNotification("Check if Rotation1 is moving Right",
-    //        _image1Path, true)));
-    //    if (result == true)
-    //    {
-    //        // User accepted the dialog box
-    //        SendCommand("True");
-    //    }
-    //    else
-    //    {
-    //        // User cancelled the dialog box
-    //        SendCommand("False");
-    //    }
-    //}
-
-    // Handle showing notification window during Rotation2 Motor Test
-    //else if (e.Data.ToString().Equals("Check if Rotation2 is moving right"))
-    //{
-    //    bool? result = false;
-    //    App.Current.Dispatcher.Invoke(new Action(() => result = ShowNotification("Check if Rotation2 is moving Right",
-    //        _image2Path, true)));
-    //    if (result == true)
-    //    {
-    //        // User accepted the dialog box
-    //        SendCommand("True");
-    //    }
-    //    else
-    //    {
-    //        // User cancelled the dialog box
-    //        SendCommand("False");
-    //    }
-    //}
-
-    //// Handle showing notification window during SwitchingUnit endstop1_switch test
-    //else if (e.Data.ToString().Equals("Rotate the SwitchingUnit right!"))
-    //{
-    //    App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Rotate the SwitchingUnit right!",
-    //        _image2Path, false)));
-    //    SendCommand();
-    //}
-
-    //// Handle showing notification window during SwitchingUnit endstop2_switch test
-    //else if (e.Data.ToString().Equals("Rotate the SwitchingUnit left!"))
-    //{
-    //    App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Rotate the SwitchingUnit left!",
-    //        _image2Path, false)));
-    //    SendCommand();
-    //}
-
-    //// Handle showing notification window during SwitchingUnitMotor Test
-    //else if (e.Data.ToString().Equals("Check if Switching Unit is Rotating Right!"))
-    //{
-    //    App.Current.Dispatcher.Invoke(new Action(() => ShowNotification(@"Press 'OK' button and observe " +
-    //        "Switching Unit rotation!")));
-    //    SendCommand();
-    //}
-
-
-    //// Handle showing notification window during SwitchingUnitMotor Test
-    //else if (e.Data.ToString().Equals("Has Switching Unit rotated right?"))
-    //{
-    //    bool? result = false;
-    //    App.Current.Dispatcher.Invoke(new Action(() => result = ShowNotification("Has Switching Unit rotated right?",
-    //        _image2Path, true)));
-    //    if (result == true)
-    //    {
-    //        // User accepted the dialog box
-    //        SendCommand("True");
-    //    }
-    //    else
-    //    {
-    //        // User cancelled the dialog box
-    //        SendCommand("False");
-    //    }
-    //}
-
-    //    // Handle showing notification window during SwitchingUnitMotor Test
-    //    else if (e.Data.ToString().Equals("EndStop2 activated! The Switching Unit Motor probably is" +
-    //        " rotating in wrong direction!"))
-    //    {
-    //        App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("EndStop2 activated!" +
-    //            " The Switching Unit Motor probably is" + " rotating in wrong direction!")));
-    //    }
-
-    //    // Handle showing notification window during SwitchingUnitMotor Test
-    //    else if (e.Data.ToString().Equals("Cannot perform SwitchingUnitMotor because of defective sensors!"))
-    //    {
-    //        App.Current.Dispatcher.Invoke(new Action(() => ShowNotification("Cannot perform Switching Unit Motor" +
-    //            " Test because of defective sensors!")));
-    //    }
-    //    }
-    //});
-
-    // Add ErrorDataReceive from tester EventHandler
-    //    _testProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-    //    {
-    //        if (e.Data != null)
-    //        {
-    //            Debug.WriteLine(e.Data);
-
-    //            // Handle TimeoutError
-    //            if (e.Data.ToString().Contains("TimeoutError"))
-    //            {
-    //                MessageBox.Show("Cannot connect to tester!");
-    //                testerStatusColor = "Red";
-    //                testerStatus = "Disconnected";
-    //                testStage = testStop;
-    //            }
-
-    //            //Handle DisconnectedError
-    //            else if (e.Data.ToString().Contains("disconnected"))
-    //            {
-    //                MessageBox.Show("Tester disconnected!");
-    //                testerStatusColor = "Red";
-    //                testerStatus = "Disconnected";
-    //                testStage = testStop;
-    //            }
-
-    //            // Handle missing file error
-    //            else if (e.Data.ToString().Contains("python.exe: can't open file") || e.Data.ToString().Contains("No such file or directory"))
-    //            {
-    //                MessageBox.Show("Cannot open python script!");
-    //            }
-    //        }
-    //    });
-
-    //    //Check if images required by notifications are in programm folder
-    //    if (!CheckIfImagesExists())
-    //    {
-    //        System.Windows.Application.Current.Shutdown();
-    //    }
-    //}

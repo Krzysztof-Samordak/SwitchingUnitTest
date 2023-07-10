@@ -15,37 +15,12 @@
 	  <RepositoryUrl>https://github.com/Krzysztof-Samordak/SwitchingUnitTest</RepositoryUrl>
 	  <RepositoryType>git</RepositoryType>
 	  <ApplicationIcon>3ShapeSwitchingUnitTest.ico</ApplicationIcon>
+	  <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+	  <AssemblyVersion></AssemblyVersion>
+	  <FileVersion></FileVersion>
+	  <Version>1.1.0</Version>
+
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Rotation1.png" />
-    <None Remove="Rotation2.png" />
-    <None Remove="SwitchingUnitLeft.png" />
-    <None Remove="SwitchingUnitRight.png" />
-    <None Remove="TestConnection.py" />
-    <None Remove="TestSequence.py" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Rotation1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Rotation2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SwitchingUnitLeft.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SwitchingUnitRight.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestConnection.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestSequence.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
@@ -57,6 +32,36 @@
     </PackageReference>
     <PackageReference Include="Unity" Version="5.11.10" />
     <PackageReference Include="XamlBehaviors.Mirror" Version="1.1.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Images\ArticulatorPlateSwitch.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Rotation1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Rotation2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\SwitchingUnitLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\SwitchingUnitRight.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="PythonScripts\TestConnection.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="PythonScripts\TestSequence.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestConnection.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestSequence.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
