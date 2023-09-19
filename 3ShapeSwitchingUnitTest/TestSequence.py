@@ -12,6 +12,10 @@ SWITCHING_UNIT_MOTOR = 3
 NUMBER_OF_TEST = 9
 # auxilary variables
 
+# Test limits
+INDUCTIVE_SWITCH_GAP_TEST_POSITIONS_CORRECT_VALUE 2
+# Test limits
+
 def threaded_function(stop, number):
     if number == ROTATION1_MOTOR:
         motor = rotation1
@@ -21,6 +25,19 @@ def threaded_function(stop, number):
         motor.move(-2*math.pi, {}).wait()
         if stop():
             break 
+            
+def measure_trigger_points(axis, sw):
+    axis.home()
+    axis.step_to(-10, {}) # Make sure we start with some distance to the home switch
+    current = sw.is_triggered()
+    points = []
+    for i in range(360):
+        axis.move_to(i * math.pi / 180, {'vibration_settle_time': 0.1}).wait()
+        s = sw.is_triggered()     
+        if s != current:
+            points.append((axis.get_step_position(), s))
+            current = s   
+    return points
           
 stop_threads = False 
 thread = Thread(target = threaded_function, args =(lambda : stop_threads, ROTATION1_MOTOR, ),)
@@ -113,6 +130,31 @@ else:
     input()
 print('Test-03-Rotation1Switch-' + str(rotation1Homed), flush=True)
 
+# Rotation1 - inductive switch gap test
+time.sleep(1)
+rotation1InductiveSwitchGapTestResult = False
+rotation1InductiveSwitchGapTestValue = 0        #Number of detected positions in which there was sensor state change detected
+
+try:
+    rotation1Switch = services['rotation1_switch']
+except:  
+    rotation1Switch = None
+    rotation1InductiveSwitchGapTestResult = None
+    
+if rotation1Switch is not None:
+    try:
+        points[] = measure_trigger_points(rotation1, rotation1Switch)
+    except:  
+        points[] = None 
+        rotation1InductiveSwitchGapTestResult = None
+        
+if points is not None:
+    rotation1InductiveSwitchGapTestValue = len(points)
+    
+if rotation1InductiveSwitchGapTestValue == INDUCTIVE_SWITCH_GAP_TEST_POSITIONS_CORRECT_VALUE
+    rotation1InductiveSwitchGapTestResult = True
+print('Test-04-Rotation1InductiveSwitchGapTest-' + str(rotation1InductiveSwitchGapTestResult), flush=True)
+
 # Rotation2 - motor test
 thread = Thread(target = threaded_function, args =(lambda : stop_threads, ROTATION2_MOTOR, ),)
 rotation2MotorResult = False
@@ -127,7 +169,7 @@ if rotation2 is not None:
     thread.start()
     rotation2MotorResult = input()
     stop_threads = True
-print('Test-04-Rotation2Motor-' + str(rotation2MotorResult), flush=True)
+print('Test-05-Rotation2Motor-' + str(rotation2MotorResult), flush=True)
 
 # Rotation2 - switch test
 time.sleep(1)
@@ -142,7 +184,31 @@ else:
     print('Cannot perform Rotation2Switch test because of defective motor', flush=True)
     rotation2Homed = None
     input()
-print('Test-05-Rotation2Switch-' + str(rotation2Homed), flush=True)
+print('Test-06-Rotation2Switch-' + str(rotation2Homed), flush=True)
+
+# Rotation2 - inductive switch gap test
+time.sleep(1)
+rotation2InductiveSwitchGapTestResult = False
+rotation2InductiveSwitchGapTestValue = 0        #Number of detected positions in which there was sensor state change detected
+
+try:
+    rotation2Switch = services['rotation2_switch']
+except:  
+    rotation2Switch = None
+    rotation2InductiveSwitchGapTestResult = None
+    
+if rotation2Switch is not None:
+    try:
+        points[] = measure_trigger_points(rotation2, rotation2Switch)
+    except:  
+        points[] = None 
+        
+if points is not None:
+    rotation2InductiveSwitchGapTestValue = len(points)
+    
+if rotation2InductiveSwitchGapTestValue == INDUCTIVE_SWITCH_GAP_TEST_POSITIONS_CORRECT_VALUE
+    rotation2InductiveSwitchGapTestResult = True
+print('Test-07-Rotation2InductiveSwitchGapTest-' + str(rotation2InductiveSwitchGapTestResult), flush=True)
 
 # SwitchingUnit -Tests preparation
 try:
@@ -172,9 +238,11 @@ switch_home_first_position = False
 switch_home_second_position = True
 
 # SwitchingUnit - endstop1_switch. test
+endstop1_switch_result = False
 
 if endstop1Switch is not None: 
-    endstop1_switch = False
+    endstop1_switch_active = False
+    endstop1_switch_inactive = True
     try:
         switchingUnit.high_impedance()
     except:
@@ -182,15 +250,19 @@ if endstop1Switch is not None:
     try:
         print("Rotate the SwitchingUnit right!", flush=True)
         input()
-        endstop1_switch = endstop1Switch.triggered
+        endstop1_switch_active = endstop1Switch.triggered
+        endstop2_switch_inactive = endstop2Switch.triggered
         switch_home_first_position = switchHome.triggered
     except:  
         print()
-print('Test-06-Endstop1_switch-' + str(endstop1_switch), flush=True)
+
 
 # SwitchingUnit - endstop2_switch. test
+endstop2_switch_result = False
+
 if endstop2Switch is not None: 
-    endstop2_switch = False
+    endstop2_switch_active = False
+    endstop2_switch_inactive = True
     try:
         switchingUnit.high_impedance()
     except:
@@ -198,11 +270,19 @@ if endstop2Switch is not None:
     try:
         print("Rotate the SwitchingUnit left!", flush=True)
         input()
-        endstop2_switch = endstop2Switch.triggered
+        endstop2_switch_active = endstop2Switch.triggered
+        endstop1_switch_inactive = endstop1Switch.triggered
         switch_home_second_position = switchHome.triggered
     except:  
         print()
-print('Test-07-Endstop2_switch-' + str(endstop2_switch), flush=True)
+        
+    if endstop1_switch_inactive == False and endstop1_switch_active == True: 
+        endstop1_switch_result = True
+    if endstop2_switch_inactive == False and endstop2_switch_active == True: 
+        endstop2_switch_result = True    
+
+print('Test-08-Endstop1_switch-' + str(endstop1_switch_result), flush=True)        
+print('Test-09-Endstop2_switch-' + str(endstop2_switch_result), flush=True)
 
 # SwitchingUnit - Switch Home test implementation
 if switchHome is not None:
@@ -210,7 +290,7 @@ if switchHome is not None:
         switch_home_result = True
     else:
         switch_home_result = False
-print('Test-08-SwitchHome-' + str(switch_home_result), flush=True)
+print('Test-10-SwitchHome-' + str(switch_home_result), flush=True)
 
 # SwitchingUnit - Motor Test
 switchingUnitMotorTestResult = False;
@@ -238,7 +318,7 @@ if switch_home_first_position == True and switch_home_second_position == False a
 else:
     print('Cannot perform SwitchingUnitMotor because of defective sensors!')
     switchingUnitMotorTestResult = None
-print('Test-09-SwitchingUnitMotor-' + str(switchingUnitMotorTestResult), flush=True)
+print('Test-11-SwitchingUnitMotor-' + str(switchingUnitMotorTestResult), flush=True)
    
 try:
     switchingUnit.high_impedance()

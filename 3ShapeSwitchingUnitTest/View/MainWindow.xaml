@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ThreeShapeSwitchingUnitTest"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="3ShapeSwitchingUnitTest"
         Height="500" Width="800"
@@ -38,7 +39,7 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
             <Label x:Name="StatusS_Label" Content="{Binding testStage}" FontSize="20" Foreground="{Binding testStageColor}"
-                   Grid.Row="3" HorizontalAlignment="Left" FontWeight="Bold" Width="320" Grid.ColumnSpan="4"
+                   Grid.Row="3" HorizontalAlignment="Left" FontWeight="Bold" Width="240" Grid.ColumnSpan="3"
                    VerticalAlignment="Center" Height="44" Margin="150,0,0,0"/>
             <Label x:Name="Status_Label" Content="Test Stage:" FontSize="20" Foreground="Azure" Grid.Row="3" Grid.Column="0"
                    HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Height="44"/>
@@ -70,6 +71,11 @@
             <Rectangle  StrokeThickness="1" Fill="#272530" Grid.Column="0" Grid.Row="0" Margin="0,5,0,0" Grid.RowSpan="3"/>
             <Label x:Name="Name_Label" Content="       3Shape&#xA; SwitchingUnit&#xA;         Test" FontSize="20" Foreground="Orange"
                    Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Image x:Name="Loading_Image" gif:ImageBehavior.AnimatedSource="/View/loader-orange.gif" Visibility="{Binding loadingGifVisibility}" Grid.Column="2" Grid.ColumnSpan="1" HorizontalAlignment="Left" Height="40" Margin="86,0,0,0" Grid.Row="3" VerticalAlignment="Top" Width="40" Grid.RowSpan="2"/>
+            <Label x:Name="Counter_Label" Grid.Column="3" Grid.Row="0" Content="No. of tests:" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Foreground="Azure" FontSize="14"/>
+            <Label x:Name="CounterS_Label" Grid.Column="3" Grid.Row="0" Content="{Binding testsNumber}" HorizontalAlignment="Center" Margin="40,0,0,0" VerticalAlignment="Center" Foreground="Azure" FontSize="14"/>
+            <Label x:Name="PCBReplaceDate_Label" Grid.Column="3" Grid.Row="1" Content="Last PCB replace" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Foreground="Azure" FontSize="14"/>
+            <Label x:Name="PCBReplaceDateS_Label" Grid.Column="4" Grid.Row="1" Content="{Binding PCBReplaceDate}" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" Foreground="Azure" FontSize="14"/>
         </Grid>
     </Border>
 </Window>

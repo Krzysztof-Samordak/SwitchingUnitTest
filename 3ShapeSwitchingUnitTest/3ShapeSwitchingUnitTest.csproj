@@ -23,7 +23,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="View\loader-orange.gif" />
+    <None Remove="View\loading.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Prism.Desktop.Net40" Version="4.1.1" />
     <PackageReference Include="System.Management" Version="7.0.0" />
     <PackageReference Include="ThreeShape.MSBuild.CodeCheck" Version="7.0.0">
@@ -31,7 +37,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Unity" Version="5.11.10" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
     <PackageReference Include="XamlBehaviors.Mirror" Version="1.1.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="View\loader-orange.gif" />
+    <Resource Include="View\loading.gif" />
   </ItemGroup>
 
   <ItemGroup>

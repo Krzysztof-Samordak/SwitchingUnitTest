@@ -3,6 +3,7 @@
 using ThreeShapeSwitchingUnitTest.Commands;
 using ThreeShapeSwitchingUnitTest.Loggers;
 using ThreeShapeSwitchingUnitTest.Tests;
+using ThreeShapeSwitchingUnitTest.Counters;
 using ThreeShapeSwitchingUnitTest.Controls.MessageBox.Views;
 using System;
 using System.Collections.ObjectModel;
@@ -19,13 +20,16 @@ using System.Windows.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+
 
 namespace ThreeShapeSwitchingUnitTest.MainViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         //Logging mechanism initialization
-//        Logger _logger = new Logger();
+        //        Logger _logger = new Logger();
 
         //Total numbers of tests achived from python script
         int _totalNumberOfTests = 9;
@@ -52,6 +56,10 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         const string connected = "Connected";
         const string disconnected = "Disconnected";
         const string clear = "clear";
+        const string visible = "Visible";
+        const string hid = "Hidden";
+        const string connectingToTester = "Connecting to the tester";
+
 
         //Test procedure variables
         string _pythonConsolePath = empty;
@@ -68,6 +76,10 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         };
 
         //View variables inicialization
+        private Counter _pcbUsageCounter;
+        private int _testsNumber;
+        private DateTime _pcbReplaceDate;
+        private string _loadingGifVisibility = hid;
         private string _testerStatus = disconnected;
         private string _testerStatusColor;
         private string _startButton = en;
@@ -76,6 +88,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         private string _testResult;
         private string _testResultColor;
         private ObservableCollection<Test> _tests;
+
 
         //Create ICommand object
         public ICommand startTestCommand { get; set; }
@@ -92,6 +105,25 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             {
                 _tests = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public int testsNumber
+        { get { return _testsNumber; } set { _testsNumber = value; OnPropertyChanged(); } }
+
+        public DateTime PCBReplaceDate
+        { get { return _pcbReplaceDate; } set { _pcbReplaceDate = value; OnPropertyChanged(); } }
+
+        public string loadingGifVisibility
+        {
+            get { return _loadingGifVisibility; }
+            set
+            {
+                if(value == visible || value == hid)
+                {
+                    _loadingGifVisibility = value;
+                    OnPropertyChanged();
+                }
             }
         }
         public string testStageColor
@@ -124,27 +156,15 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             get { return _testStage; }
             set
             {
-                if (value == ready)
+                if (value == ready || value == testStop || value == testFinished || value == empty)
                 {
                     testStageColor = "Azure";
                     _testStage = value;
                     OnPropertyChanged();
                 }
-                else if (value == testInProgress)
+                else if (value == testInProgress || value == connectingToTester)
                 {
                     testStageColor = "Orange";
-                    _testStage = value;
-                    OnPropertyChanged();
-                }
-                else if (value == testFinished)
-                {
-                    testStageColor = "Azure";
-                    _testStage = value;
-                    OnPropertyChanged();
-                }
-                else if (value == testStop)
-                {
-                    testStageColor = "Azure";
                     _testStage = value;
                     OnPropertyChanged();
                 }
@@ -215,6 +235,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                 if (c.IsKnownColor)
                 {
                     _testerStatusColor = value;
+                    loadingGifVisibility = hid;
                     OnPropertyChanged();
                 }
             }
@@ -222,7 +243,13 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
         public MainViewModel()
         {
+            _pcbUsageCounter = new Counter();
             _testProcess = new Process();
+
+            _pcbUsageCounter = ReadJSON<Counter>(nameof(Counter));
+
+            PCBReplaceDate = _pcbUsageCounter.date;
+            testsNumber = _pcbUsageCounter.number;
 
             //Read Configuration file and attach values to adequate variables
             ReadConfig();
@@ -233,12 +260,14 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
             PrepareTestSetup();
 
             startTestCommand = new RelayCommand(StartTestClick);
-
             //Create tests list
             tests = new ObservableCollection<Test>();
 
             //Check connection with the tester
             CheckTesterConnection();
+
+            _pcbUsageCounter.DailyCheck();
+            CounterUpdate(_pcbUsageCounter, true);
         }
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -273,6 +302,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
 
             if (testStage == testInProgress && _testProcess.StartInfo.Arguments == _pythonTestScriptName)
             {
+                CounterUpdate(_pcbUsageCounter, false);
                 numberOfTests = tests.Count;
                 testStage = testFinished;
                 if (numberOfTests == _totalNumberOfTests && tests.All(test => test.result == en))
@@ -294,6 +324,8 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
         {
             //Setup test
             _testProcess.StartInfo.Arguments = _pythonTestConnectionScriptName;
+            testStage = connectingToTester;
+            loadingGifVisibility = visible;
 //            _logger.log("Checking tester connection");
 
             //Call Start Test process
@@ -313,7 +345,8 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     ConfigurationManager.AppSettings.Get("Image2Name") is not null &&
                     ConfigurationManager.AppSettings.Get("Image3Name") is not null &&
                     ConfigurationManager.AppSettings.Get("Image4Name") is not null &&
-                    ConfigurationManager.AppSettings.Get("Image5Name") is not null)
+                    ConfigurationManager.AppSettings.Get("Image5Name") is not null &&
+                    ConfigurationManager.AppSettings.Get("PCBUsageCounterLimit") is not null)
                 {
                     _pythonConsolePath = ConfigurationManager.AppSettings.Get("PythonConsolePath");
                     _pythonTestScriptName = ConfigurationManager.AppSettings.Get("PythonTestScriptName");
@@ -324,6 +357,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                     _image3Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image3Name");
                     _image4Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image4Name");
                     _image5Path = _currentDirectory + @"\Images\" + ConfigurationManager.AppSettings.Get("Image5Name");
+                    _pcbUsageCounter.limit = Convert.ToInt16(ConfigurationManager.AppSettings.Get("PCBUsageCounterLimit"));
                 }
                 else
                 {
@@ -459,7 +493,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                             MessageBox.Show("Cannot connect to tester!");
                             testerStatusColor = "Red";
                             testerStatus = "Disconnected";
-                            testStage = testStop;
+                            testStage = empty;
                             break;
 
                         case var tmp when message.Contains("Number of tests -"): // Check how many tests should be performed
@@ -602,7 +636,7 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                             MessageBox.Show("Cannot connect to tester!");
                             testerStatusColor = "Red";
                             testerStatus = "Disconnected";
-                            testStage = testStop;
+                            testStage = empty;
                             break;
 
                         case var tmp when message.Contains("disconnected"): //Handle DisconnectedError
@@ -619,6 +653,11 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                         case var tmp when message.Contains("No such file or directory"): //Handle missing file error
                             MessageBox.Show("Cannot open python script!");
                             break;
+                        case var tmp when  message.Contains("OVERCURRENT"): // Handle overcurrent  state error
+                            MessageBox.Show("Overcurrent protection mechanism activated! Please turn off the tester, disconnect switching" +
+                                " unit under test and check the IST_CB PCBA(10004517) for any visible damage sights.");
+                            testStage = testStop;
+                            break;
                     }
                 }
             });
@@ -629,5 +668,49 @@ namespace ThreeShapeSwitchingUnitTest.MainViewModel
                 System.Windows.Application.Current.Shutdown();
             }
         }
+
+        public bool SaveToJSON(object obj, string name)
+        {
+            bool returnValue = true;
+            string serializedObject = JsonConvert.SerializeObject(obj);
+            try
+            {
+                File.WriteAllText(Directory.GetCurrentDirectory() + @"\" + name + ".json", serializedObject);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                returnValue = false;
+            }
+            return returnValue;
+        }
+
+        public T ReadJSON<T>(string name)
+        {
+            string serializedObject = string.Empty;
+            T returnValue;
+            try
+            {
+                serializedObject = File.ReadAllText(Directory.GetCurrentDirectory() + @"\" + name + ".json");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            returnValue = JsonConvert.DeserializeObject<T>(serializedObject);
+            return returnValue;
+        }
+
+        public void CounterUpdate(Counter counter, bool daily)
+        {
+            counter.check(daily);
+            testsNumber = counter.number;
+            PCBReplaceDate = counter.date;
+            SaveToJSON(counter, nameof(counter));
+        }
     }
 }
+
+
+
